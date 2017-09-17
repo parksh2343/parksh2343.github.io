@@ -1,10 +1,1041 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
 <head>
-<meta charset="EUC-KR">
-<title>Insert title here</title>
+<meta charset="utf-8">
+<title>My Baas App</title>
+<meta name="description" content="My Baas App">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="css/baas.css" type="text/css">
+<script src="js/underscore.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/backbone.js"></script>
+<script src="js/q.js"></script>
+<script src="js/baas-1.1.2.js"></script>
+<script src="js/baasSample.js"></script>
+<script src="js/jquery.nestedAccordion.js"></script>
+<script>
+
+$(document).ready(function(){
+
+	$.fn.accordion.defaults.container = false; 
+	$("#acc1").accordion({
+		el: ".h", 
+		head: "h4, h5", 
+		next: "div", 
+		initShow : "div.outer:eq(1)",
+		event: "click"
+	});
+	$("h5").click(function() {
+		$("#result").html("");
+		$("#error").html("");
+		$("#source").html("");
+	});
+	
+	var promise = Q.resolve();
+    Baas.API_KEY = $('#javascriptKey').val();
+    
+	$('input[type="button"]').each(function(){
+		$(this).click(function(){
+			$("#result").html("");
+			$("#error").html("");
+		
+			var fn = window[$(this).attr('id')];
+			fn($(this).parent());
+			
+			var sucFunc = "function(model, response){ \n"+
+			"console.log(JSON.stringify(model)); sp(model, response); \n"+
+			"}";
+			var errFunc = "function(model, response){ \n"+
+			"console.log(response.responseText); ep(model, response); \n"+
+			"}";
+			var source = eval($(this).attr('id')).toString().match(/function[^{]+\{([\s\S]*)\}$/)[1];
+			source = source.replace('sf', $('#successFunc').text());
+			source = source.replace('ef', $('#errorFunc').text());
+			$(this).parent().find('input[type=text]').each(function(){
+				source = source.replace("el.find('#"+ $(this).attr('id') +"').val()", "'" + $(this).val() + "'");
+			});
+		    $('#source').text(source);
+		});
+	});
+});
+
+window.onload = function () {
+   // 페이스북 로그인 상태가 변경되면
+    // `linkFacebook()` 메서드를 이용해서 Baas.User 정보를 가져온다.
+    // 이 때, 해당 페이스북 토큰으로 가입된 사용자가 있다면 해당 사용자의 인스턴스를,
+    // 가입된 사용자가 없다면 임의의 아이디로 가입된 사용자의 인스턴스를 가져온다.
+    window.changeButton = function (res) {
+        res = res && res.authResponse ? res.authResponse : res;
+
+        if (res) {
+        	if (Baas.User.isLoggedIn()) {
+        		Baas.User.getMe().linkFacebook(res);
+        		$('#login').hide();
+                $('#logout,#unlink').show();
+        	}else{
+	        	Baas.User.linkFacebook(res, {
+	                success: function (model) {
+	                    console.log('페이스북을 이용한 로그인/계정생성 완료', model);
+	                    
+	                    $('#login').hide();
+	                    $('#logout,#unlink').show();
+	                }
+	            });	
+        	}
+        }
+    };
+
+    // 페이스북 SDK에서 제공하는 메서드로 SDK가 준비되면 실행된다.
+    window.fbAsyncInit = function () {
+        FB.init({
+            // 페이스북 앱 아이디를 앱 설정 페이지에서 확인 후 변경한다.
+            appId: 'YOUR APP KEY',
+            cookie: true,
+            xfbml: true,
+            version: 'v2.1'
+        });
+
+        // 페이지를 로드할 때 한 번 로그인 상태를 체크한다.
+        FB.getLoginStatus(function (response) {
+            changeButton(response);
+        });
+    };
+
+    $(document)
+        // 페이스북 연결 끊기를 했을 때, 로그인된 사용자의 계정에 페이스북 계정의 연동을 끊는다.
+        // 이 때, 로그아웃은 되지 않는다.
+        .on('click', '#unlink', function () {
+            var me = Baas.User.getMe();
+
+            if (me.isLoggedIn() && me.isLinkedFacebook()) {
+                me.unlinkFacebook().then(function () {
+                    console.log(me);
+                });
+            }
+        })
+
+        // 사용자를 로그아웃 시킨다. 다시 페이스북 로그인 버튼을 누르면 로그인된다.
+        .on('click', '#logout', function () {
+            Baas.User.logOut();
+            $('#logout,#unlink').hide();
+            $('#login').show();
+        });
+
+    // 페이스북 SDK를 삽입하는 코드
+    // SDK 사이트의 안내에 따른다.
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+};
+</script>
 </head>
+
 <body>
-skt baas test page
+	<div id="wrapper"> 
+	<div id="content"> 
+	<div id="container">
+	<div id="main">
+	<pre id="successFunc" style="display: none">function(model, response){
+			console.log(JSON.stringify(response));
+		}</pre>
+	<pre id="errorFunc" style="display: none">function(model, response){
+			console.log(response.responseText);
+		}</pre>
+	<h2>Main</h2>
+	** IE 테스트시 SSL 적용이 되어있어야 합니다. **
+	[Put Your Javascript  Key here] - JavascriptKey<br/>
+	<p>Baas.javascriptKey : <input type="text" id="javascriptKey" value="YOUR TDC_PROJECT_KEY"></p>
+
+	<ul id="acc1" class="accordion">
+		<li>
+			<h4>Baas.Object</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>다수의 Row Data 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="RetrievingObject">
+									tableName : <input type="text" id="tableName" value=""> <br/>
+									<input type="button" id="listObjects" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>단일 Row Data 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="GetObject">
+									tableName : <input type="text" id="tableName" value=""> <br/>
+									objectId : <input type="text" id="objectId" value=""> <br/>
+									<input type="button" id="getObject" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Row Data 생성</h5>
+						<div class="inner">
+							<p>
+								<form id="SaveObject">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="createObject" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>단일 Row Data 수정</h5>
+						<div class="inner">
+							<p>
+								<form id="UpdateObject">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="updateObject" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>단일 Row Data 삭제</h5>
+						<div class="inner">
+							<p>
+								<form id="DeleteObject">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="removeObject" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>Database 관리.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>Pointer Row Data 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="PointerRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="pointerRowData" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : lessThan</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereLessThan" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : lessThanOrEqual</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereLessThanOrEqual" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : greaterThan</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereGreaterThan" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : greaterThanOrEqual</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereGreaterThanOrEqual" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : equal</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereEqual" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : notEqual</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereNotEqual" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : contains</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereContains" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : all</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereAll" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : In</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereIn" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : Not In</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereNin" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : Exists</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									<input type="button" id="whereExists" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : Not Exists</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									<input type="button" id="whereNotExists" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : startWith</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereStartWith" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : endWith</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="whereEndWith" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Where 조건 : skip, limit</h5>
+						<div class="inner">
+							<p>
+								<form id="WhereRowDataForm">
+									tableName : <input type="text" id="tableName"> <br/>
+									skip : <input type="text" id="skip" value="0"> <br/>
+									limit : <input type="text" id="limit" value="5"> <br/>
+									<input type="button" id="whereSkipLimit" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Count 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="TotalCount">
+									tableName : <input type="text" id="tableName"> <br/>
+									columnName : <input type="text" id="columnName"> <br/>
+									columnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="totalCount" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relational Row Data 조회(InQuery)</h5>
+						<div class="inner">
+							<p>
+								<form id="InQuery">
+									parentTableName : <input type="text" id="parentTableName"> <br/>
+									childTableName : <input type="text" id="childTableName"> <br/>
+									childEqualToColumnName : <input type="text" id="childEqualToColumnName"> <br/>
+									childEqualToColumnValue : <input type="text" id="childEqualToColumnValue"> <br/>
+									parentRelationColumnName : <input type="text" id="parentRelationColumnName"> <br/>
+									<input type="button" id="relationInQuery" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relational Row Data 조회(NotInQuery)</h5>
+						<div class="inner">
+							<p>
+								<form id="NotInQuery">
+									parentTableName : <input type="text" id="parentTableName"> <br/>
+									childTableName : <input type="text" id="childTableName"> <br/>
+									childEqualToColumnName : <input type="text" id="childEqualToColumnName"> <br/>
+									childEqualToColumnValue : <input type="text" id="childEqualToColumnValue"> <br/>
+									parentRelationColumnName : <input type="text" id="parentRelationColumnName"> <br/>
+									<input type="button" id="relationNotInQuery" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relational Row Data 조회(RelatedTo)</h5>
+						<div class="inner">
+							<p>
+								<form id="RelatedTo">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									relationColumn : <input type="text" id="relationColumn"> <br/>
+									childTable : <input type="text" id="childTable"> <br/>
+									<input type="button" id="relationRelatedTo" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relational Row Data 조회(NotRelatedTo)</h5>
+						<div class="inner">
+							<p>
+								<form id="NotRelatedTo">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									relationColumn : <input type="text" id="relationColumn"> <br/>
+									childTable : <input type="text" id="childTable"> <br/>
+									<input type="button" id="relationNotRelatedTo" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Compound 조건을 통한 Row Data 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="Compound">
+									tableName : <input type="text" id="tableName"> <br/>
+									equalToColumnName : <input type="text" id="equalToColumnName"> <br/>
+									equalToColumnValue : <input type="text" id="equalToColumnValue"> <br/>
+									startWithColumnName : <input type="text" id="startWithColumnName"> <br/>
+									startWithColumnValue : <input type="text" id="startWithColumnValue"> <br/>
+									<input type="button" id="compound" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Row 증감데이터 자동 수정</h5>
+						<div class="inner">
+							<p>
+								<form id="Increment">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									incrementColumnName : <input type="text" id="columnName"> <br/>
+									incrementColumnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="increment" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>배열 데이터 Add</h5>
+						<div class="inner">
+							<p>
+								<form id="ArrayAdd">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									addColumnName : <input type="text" id="columnName"> <br/>
+									addColumnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="arrayAdd" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>배열 데이터 Unique Add</h5>
+						<div class="inner">
+							<p>
+								<form id="ArrayAddUnique">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									addColumnName : <input type="text" id="columnName"> <br/>
+									addColumnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="arrayAddUnique" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>배열 데이터 삭제</h5>
+						<div class="inner">
+							<p>
+								<form id="ArrayRemove">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									addColumnName : <input type="text" id="columnName"> <br/>
+									addColumnValue : <input type="text" id="columnValue"> <br/>
+									<input type="button" id="arrayRemove" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relation Row Data 추가</h5>
+						<div class="inner">
+							<p>
+								<form id="RelationRowDataAdd">
+									parentTableName : <input type="text" id="tableName"> <br/>
+									parentObjectId : <input type="text" id="objectId"> <br/>
+									childTableName : <input type="text" id="childTable"> <br/>
+									childObjectId : <input type="text" id="childObjectId"> <br/>
+									parentRelationColumnName : <input type="text" id="relationColumn"> <br/>
+									<input type="button" id="relationRowDataAdd" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Relation Row Data 삭제</h5>
+						<div class="inner">
+							<p>
+								<form id="RelationRowDataRemove">
+									parentTableName : <input type="text" id="tableName"> <br/>
+									parentObjectId : <input type="text" id="objectId"> <br/>
+									childTableName : <input type="text" id="childTable"> <br/>
+									childObjectId : <input type="text" id="childObjectId"> <br/>
+									parentRelationColumnName : <input type="text" id="relationColumn"> <br/>
+									<input type="button" id="relationRowDataRemove" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>특정 Row의 Column Data 삭제.</h5>
+						<div class="inner">
+							<p>
+								<form id="RowColumnUnset">
+									tableName : <input type="text" id="tableName"> <br/>
+									objectId : <input type="text" id="objectId"> <br/>
+									unsetColumnName : <input type="text" id="columnName"> <br/>
+									<input type="button" id="rowColumnUnset" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>다수 Row Data 생성.</h5>
+						<div class="inner">
+							<p>
+								<form id="BatchInsert">
+									tableName : <input type="text" id="tableName"> <br/>
+									firstObjColumnName : <input type="text" id="columnName"> <br/>
+									firstObjColumnValue : <input type="text" id="columnValue"> <br/>
+									secondObjColumnName : <input type="text" id="columnName2"> <br/>
+									secondObjColumnValue : <input type="text" id="columnValue2"> <br/>
+									<input type="button" id="batchInsert" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>다수 Row Data 삭제.</h5>
+						<div class="inner">
+							<p>
+								<form id="BatchDelete">
+									tableName : <input type="text" id="tableName"> <br/>
+									firstObjectId : <input type="text" id="firstObjectId"> <br/>
+									secondObjectId : <input type="text" id="secondObjectId"> <br/>
+									<input type="button" id="batchDelete" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<!-- <li>
+						<h5>멀티 오퍼레이션.</h5>
+						<div class="inner">
+							<p>
+								Get
+							</p>
+						</div>
+					</li> -->
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>사용자 관리.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>사용자 추가.</h5>
+						<div class="inner">
+							<p>
+								<form id="UserAdd">
+									username : <input type="text" id="username"> <br/>
+									password : <input type="text" id="password"> <br/>
+									email : <input type="text" id="email"> <br/>
+									<input type="button" id="createUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>다수 사용자 정보 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="MultiUserQuery">
+									<input type="button" id="listUsers" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>단일 사용자 정보 조회</h5>
+						<div class="inner">
+							<p>
+								<form id="SingleUserQuery">
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="getUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>사용자 정보 수정</h5>
+						<div class="inner">
+							<p>
+								<form id="UserUpdate">
+									objectId : <input type="text" id="objectId"> <br/>
+									email : <input type="text" id="email"> <br/>
+									<input type="button" id="updateUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>사용자 삭제</h5>
+						<div class="inner">
+							<p>
+								<form id="UserDelete">
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="removeUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>사용자 로그인</h5>
+						<div class="inner">
+							<p>
+								<form id="UserLogin">
+									username : <input type="text" id="username"> <br/>
+									password : <input type="text" id="password"> <br/>
+									<input type="button" id="loginUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>사용자 로그아웃</h5>
+						<div class="inner">
+							<p>
+								<form id="UserLogin">
+									<input type="button" id="logoutUser" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>사용자 로그인 여부 확인</h5>
+						<div class="inner">
+							<p>
+								<form id="UserLogin">
+									<input type="button" id="isLogin" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>이메일 인증.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>가입 인증 메일 발송.</h5>
+						<div class="inner">
+							<p>
+								<form id="VerifyEmail">
+									email : <input type="text" id="email"> <br/>
+									<input type="button" id="verifyEmail" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>비밀번호 재발급.</h5>
+						<div class="inner">
+							<p>
+								<form id="ResetPassword">
+									email : <input type="text" id="email"> <br/>
+									<input type="button" id="resetPassword" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>사용자 연동.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>Sign Up and Logging In.</h5>
+						<div class="inner">
+							<p>
+								<fb:login-button id="login" scope="public_profile,email" onlogin="changeButton"></fb:login-button>
+								<button id="logout" style="display:none">로그아웃</button>
+								<button id="unlink" style="display:none">페이스북 연결 해제</button>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>Role 관리.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>Role 생성.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleInsert">
+									roleName : <input type="text" id="roleName"> <br/>
+									<input type="button" id="createRole" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>다수의 Role 조회.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleMultiQuery">
+									<input type="button" id="listRole" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>단일 Role 조회.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleSingleQuery">
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="getRole" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Role 수정.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleUpdate">
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="updateRole" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Role 삭제.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleDelete">
+									objectId : <input type="text" id="objectId"> <br/>
+									<input type="button" id="removeRole" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Row 단위 권한 설정.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleACL">
+									tableName : <input type="text" id="tableName"> <br/>
+									tableObjectId : <input type="text" id="tableObjectId"> <br/>
+									objPublicReadAccess : <input type="text" id="objPublicReadAccess"> true/false <br/>
+									objPublicWriteAccess : <input type="text" id="objPublicWriteAccess"> true/false <br/>
+									objUserObjectId : <input type="text" id="objUserObjectId"> UserObjectId <br/>
+									objUserObjectIdReadAccess : <input type="text" id="objUserObjectIdReadAccess"> true/false <br/>
+									objUserObjectIdWriteAccess : <input type="text" id="objUserObjectIdWriteAccess"> true/false <br/>
+									roleObjectId : <input type="text" id="roleObjectId"> <br/>
+									roleReadAccess : <input type="text" id="roleReadAccess"> true/false <br/>
+									roleWriteAccess : <input type="text" id="roleWriteAccess"> true/false <br/>
+									<input type="button" id="btnRoleACL" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>Role 계층관계 설정.</h5>
+						<div class="inner">
+							<p>
+								<form id="RoleHierarchy">
+									parentRoleObjectId : <input type="text" id="parentRoleObjectId"> <br/>
+									addChildRoleObjectId : <input type="text" id="addChildRoleObjectId"> <br/>
+									<input type="button" id="btnRoleHierarchy" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>GeoPoint.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>GeoPoint Row Data 생성.</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointInsert">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latitude : <input type="text" id="latitude"> <br/>
+									longitude : <input type="text" id="longitude"> <br/>
+									<input type="button" id="geoPointInsert" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>GeoPoint 근거리 조회.</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointNear">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latitude : <input type="text" id="latitude"> <br/>
+									longitude : <input type="text" id="longitude"> <br/>
+									<input type="button" id="geoPointNear" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>GeoPoint 최대 반경 내 근거리 조회(Kilometers).</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointKilometers">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latitude : <input type="text" id="latitude"> <br/>
+									longitude : <input type="text" id="longitude"> <br/>
+									kilometers : <input type="text" id="kilometers"> <br/>
+									<input type="button" id="geoPointKilometers" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>GeoPoint 최대 반경 내 근거리 조회(Miles).</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointMiles">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latitude : <input type="text" id="latitude"> <br/>
+									longitude : <input type="text" id="longitude"> <br/>
+									miles : <input type="text" id="miles"> <br/>
+									<input type="button" id="geoPointMiles" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>GeoPoint 최대 반경 내 근거리 조회(Radians).</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointRadians">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latitude : <input type="text" id="latitude"> <br/>
+									longitude : <input type="text" id="longitude"> <br/>
+									radians : <input type="text" id="radians"> <br/>
+									<input type="button" id="geoPointRadians" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>GeoPoint 범위 조회.</h5>
+						<div class="inner">
+							<p>
+								<form id="GeoPointWithin">
+									tableName : <input type="text" id="tableName"> <br/>
+									geoColumn : <input type="text" id="geoColumn"> <br/>
+									latSouthWest : <input type="text" id="latSouthWest"> <br/>
+									lngSouthWest : <input type="text" id="lngSouthWest"> <br/>
+									latNorthEast : <input type="text" id="latNorthEast"> <br/>
+									lngNorthEast : <input type="text" id="lngNorthEast"> <br/>
+									<input type="button" id="geoPointWithin" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<h4>파일 관리.</h4>
+			<div class="inner">
+				<ul>
+					<li>
+						<h5>파일 업로드.</h5>
+						<div class="inner">
+							<p>
+								<form id="FileUpload">
+									파일 :	<input type="file" id="uploadfile" name="uploadfile" /><br>
+											<input type="button" id="fileUpload" value="올리기">
+								</form>
+							</p>
+						</div>
+					</li>
+					<li>
+						<h5>다수 파일 정보 조회.</h5>
+						<div class="inner">
+							<p>
+								<form id="FileMultiQuery">
+									<input type="button" id="fileMultiQuery" value="실행">
+								</form>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</li>
+	</ul>
+	</div>	<!-- main -->
+	<div id="side1" class="side">
+		Source : <pre id="source"> </pre>
+	</div>
+	<div id="side2" class="side">
+		Result: <pre id="result" style="overflow: auto; width:450px; height:200px;"> </pre> <br>
+		Error : <pre id="error" style="overflow: auto; width:450px; height:150px;"> </pre>
+	</div>
+	</div>	<!-- container -->
+	</div>	<!-- content -->
+	</div>	<!-- wrapper -->
+
+	
+	<br><br><br>
+	<div class="btnbox center">
+<!-- 				<span class="btn5"><button type="button" onClick="facebooklogin_3();return false;">Facebook ê³ì íìê°ì</button></span> -->
+		<!-- <button class="btn-facebook btn-large" onclick="fLogin();">
+			<span class="btn-facebook-text">Login with Facebook</span>
+		</button> -->
+	</div>
+	
+
 </body>
+
 </html>
