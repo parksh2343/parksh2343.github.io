@@ -39,10 +39,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 var routes = [
-    { path: '', redirectTo: '/foodie/dashboard', pathMatch: 'full' },
-    { path: 'foodie/dashboard', component: __WEBPACK_IMPORTED_MODULE_2__dashboard_component__["a" /* DashboardComponent */] },
-    { path: 'foodie/detail/:id', component: __WEBPACK_IMPORTED_MODULE_4__hero_detail_component__["a" /* HeroDetailComponent */] },
-    { path: 'foodie/heroes', component: __WEBPACK_IMPORTED_MODULE_3__heroes_component__["a" /* HeroesComponent */] }
+    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: 'dashboard', component: __WEBPACK_IMPORTED_MODULE_2__dashboard_component__["a" /* DashboardComponent */] },
+    { path: 'detail/:id', component: __WEBPACK_IMPORTED_MODULE_4__hero_detail_component__["a" /* HeroDetailComponent */] },
+    { path: 'heroes', component: __WEBPACK_IMPORTED_MODULE_3__heroes_component__["a" /* HeroesComponent */] }
 ];
 var AppRoutingModule = (function () {
     function AppRoutingModule() {
@@ -100,7 +100,7 @@ var AppComponent = (function () {
 AppComponent = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
         selector: 'my-app',
-        template: "\n    <h1>{{title}}</h1>\n    <nav>\n      <a routerLink=\"/foodie/dashboard\" routerLinkActive=\"active\">Dashboard</a>\n      <a routerLink=\"/foodie/heroes\" routerLinkActive=\"active\">Heroes</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
+        template: "\n    <h1>{{title}}</h1>\n    <nav>\n      <a routerLink=\"/dashboard\" routerLinkActive=\"active\">Dashboard</a>\n      <a routerLink=\"/heroes\" routerLinkActive=\"active\">Heroes</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
         styles: [__webpack_require__("../../../../../src/app/app.component.css")]
     })
 ], AppComponent);
@@ -198,7 +198,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/dashboard.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h3>Top Heroes</h3>\n<div class=\"grid grid-pad\">\n  <a *ngFor=\"let hero of heroes\"  [routerLink]=\"['/foodie/detail', hero.id]\"  class=\"col-1-4\">\n    <div class=\"module hero\">\n      <h4>{{hero.name}}</h4>\n    </div>\n  </a>\n</div>\n<hero-search></hero-search>\n"
+module.exports = "<h3>Top Heroes</h3>\n<div class=\"grid grid-pad\">\n  <a *ngFor=\"let hero of heroes\"  [routerLink]=\"['/detail', hero.id]\"  class=\"col-1-4\">\n    <div class=\"module hero\">\n      <h4>{{hero.name}}</h4>\n    </div>\n  </a>\n</div>\n<hero-search></hero-search>\n"
 
 /***/ }),
 
@@ -648,7 +648,7 @@ var HeroesComponent = (function () {
         this.selectedHero = hero;
     };
     HeroesComponent.prototype.gotoDetail = function () {
-        this.router.navigate(['/foodie/detail', this.selectedHero.id]);
+        this.router.navigate(['/detail', this.selectedHero.id]);
     };
     return HeroesComponent;
 }());
