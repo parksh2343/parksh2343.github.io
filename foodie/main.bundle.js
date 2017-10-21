@@ -41,7 +41,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 var routes = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: '', redirectTo: '/store-list', pathMatch: 'full' },
     { path: 'dashboard', component: __WEBPACK_IMPORTED_MODULE_2__hero_dashboard_component__["a" /* DashboardComponent */] },
     { path: 'detail/:id', component: __WEBPACK_IMPORTED_MODULE_4__hero_hero_detail_component__["a" /* HeroDetailComponent */] },
     { path: 'heroes', component: __WEBPACK_IMPORTED_MODULE_3__hero_heroes_component__["a" /* HeroesComponent */] },
