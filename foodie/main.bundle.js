@@ -28,6 +28,7 @@ webpackEmptyAsyncContext.id = "../../../../../src/$$_gendir lazy recursive";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__hero_heroes_component__ = __webpack_require__("../../../../../src/app/hero/heroes.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__hero_hero_detail_component__ = __webpack_require__("../../../../../src/app/hero/hero-detail.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__store_store_list_component__ = __webpack_require__("../../../../../src/app/store/store-list.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__store_store_detail_component__ = __webpack_require__("../../../../../src/app/store/store-detail.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -40,12 +41,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
 var routes = [
     { path: '', redirectTo: '/store-list', pathMatch: 'full' },
     { path: 'dashboard', component: __WEBPACK_IMPORTED_MODULE_2__hero_dashboard_component__["a" /* DashboardComponent */] },
     { path: 'detail/:id', component: __WEBPACK_IMPORTED_MODULE_4__hero_hero_detail_component__["a" /* HeroDetailComponent */] },
     { path: 'heroes', component: __WEBPACK_IMPORTED_MODULE_3__hero_heroes_component__["a" /* HeroesComponent */] },
-    { path: 'store-list', component: __WEBPACK_IMPORTED_MODULE_5__store_store_list_component__["a" /* StoreListComponent */] }
+    { path: 'store-list', component: __WEBPACK_IMPORTED_MODULE_5__store_store_list_component__["a" /* StoreListComponent */] },
+    { path: 'store-detail/:id', component: __WEBPACK_IMPORTED_MODULE_6__store_store_detail_component__["a" /* StoreDetailComponent */] }
 ];
 var AppRoutingModule = (function () {
     function AppRoutingModule() {
@@ -96,14 +99,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 var AppComponent = (function () {
     function AppComponent() {
-        this.title = 'Tour of Heroes';
+        this.title = '맛집들';
     }
     return AppComponent;
 }());
 AppComponent = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["o" /* Component */])({
         selector: 'my-app',
-        template: "\n    <h1>{{title}}</h1>\n    <nav>\n      <a routerLink=\"/dashboard\" routerLinkActive=\"active\">Dashboard</a>\n      <a routerLink=\"/heroes\" routerLinkActive=\"active\">Heroes</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
+        template: "\n    <h1>{{title}}</h1>\n    <input type=button value=\"\uB4A4\uB85C\uAC00\uAE30\" onClick=\"history.back();\">\n    <nav>\n      <a routerLink=\"/store-list\" routerLinkActive=\"active\">\uB9DB\uC9D1\uB4E4</a>\n      <a routerLink=\"/heroes\" routerLinkActive=\"active\">\uCE74\uD14C\uACE0\uB9AC2</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
         styles: [__webpack_require__("../../../../../src/app/app.component.css")]
     })
 ], AppComponent);
@@ -131,6 +134,8 @@ AppComponent = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__hero_hero_service__ = __webpack_require__("../../../../../src/app/hero/hero.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__hero_hero_search_component__ = __webpack_require__("../../../../../src/app/hero/hero-search.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__store_store_list_component__ = __webpack_require__("../../../../../src/app/store/store-list.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__store_store_detail_component__ = __webpack_require__("../../../../../src/app/store/store-detail.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__store_store_service__ = __webpack_require__("../../../../../src/app/store/store.service.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -143,6 +148,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 // Imports for loading & configuring the in-memory web api
+
+
 
 
 
@@ -172,9 +179,13 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_10__hero_hero_detail_component__["a" /* HeroDetailComponent */],
             __WEBPACK_IMPORTED_MODULE_9__hero_heroes_component__["a" /* HeroesComponent */],
             __WEBPACK_IMPORTED_MODULE_12__hero_hero_search_component__["a" /* HeroSearchComponent */],
-            __WEBPACK_IMPORTED_MODULE_13__store_store_list_component__["a" /* StoreListComponent */]
+            __WEBPACK_IMPORTED_MODULE_13__store_store_list_component__["a" /* StoreListComponent */],
+            __WEBPACK_IMPORTED_MODULE_14__store_store_detail_component__["a" /* StoreDetailComponent */]
         ],
-        providers: [__WEBPACK_IMPORTED_MODULE_11__hero_hero_service__["a" /* HeroService */]],
+        providers: [
+            __WEBPACK_IMPORTED_MODULE_11__hero_hero_service__["a" /* HeroService */],
+            __WEBPACK_IMPORTED_MODULE_15__store_store_service__["a" /* StoreService */]
+        ],
         bootstrap: [__WEBPACK_IMPORTED_MODULE_7__app_component__["a" /* AppComponent */]]
     })
 ], AppModule);
@@ -711,6 +722,97 @@ var InMemoryDataService = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/store/store-detail.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "label {\n  display: inline-block;\n  width: 3em;\n  margin: .5em 0;\n  color: #607D8B;\n  font-weight: bold;\n}\ninput {\n  height: 2em;\n  font-size: 1em;\n  padding-left: .4em;\n}\nbutton {\n  margin-top: 20px;\n  font-family: Arial;\n  background-color: #eee;\n  border: none;\n  padding: 5px 10px;\n  border-radius: 4px;\n  cursor: pointer; cursor: hand;\n}\nbutton:hover {\n  background-color: #cfd8dc;\n}\nbutton:disabled {\n  background-color: #eee;\n  color: #ccc; \n  cursor: auto;\n}\n", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/store/store-detail.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div *ngIf=\"store\">\n  <h2>{{store.storeName}} details!</h2>\n  <div>\n    <label>id: </label>{{store.storeId}}</div>\n  <div>\n    <label>name: </label>\n    <input [(ngModel)]=\"store.storeName\" placeholder=\"name\" />\n   </div>\n  <button (click)=\"goBack()\">Back</button>\n  <button (click)=\"save()\">Save</button>\n</div>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/store/store-detail.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StoreDetailComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_switchMap__ = __webpack_require__("../../../../rxjs/add/operator/switchMap.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_add_operator_switchMap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common__ = __webpack_require__("../../../common/@angular/common.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__store_service__ = __webpack_require__("../../../../../src/app/store/store.service.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+var StoreDetailComponent = (function () {
+    function StoreDetailComponent(storeService, route, location) {
+        this.storeService = storeService;
+        this.route = route;
+        this.location = location;
+    }
+    StoreDetailComponent.prototype.ngOnInit = function () {
+        var id = this.route.snapshot.params['id'];
+        this.storeService.getStore(this.onSuccess.bind(this), this.onError.bind(this), id);
+    };
+    StoreDetailComponent.prototype.onSuccess = function (model, response) {
+        var _this = this;
+        console.log(response);
+        this.route.paramMap.subscribe(function (store) { return _this.store = response; });
+    };
+    StoreDetailComponent.prototype.onError = function (model, response) {
+    };
+    StoreDetailComponent.prototype.save = function () {
+        var _this = this;
+        this.storeService.update(this.store)
+            .then(function () { return _this.goBack(); });
+    };
+    StoreDetailComponent.prototype.goBack = function () {
+        this.location.back();
+    };
+    return StoreDetailComponent;
+}());
+StoreDetailComponent = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["o" /* Component */])({
+        selector: 'store-detail',
+        template: __webpack_require__("../../../../../src/app/store/store-detail.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/store/store-detail.component.css")]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_4__store_service__["a" /* StoreService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__store_service__["a" /* StoreService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__angular_common__["f" /* Location */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_common__["f" /* Location */]) === "function" && _c || Object])
+], StoreDetailComponent);
+
+var _a, _b, _c;
+//# sourceMappingURL=store-detail.component.js.map
+
+/***/ }),
+
 /***/ "../../../../../src/app/store/store-list.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -719,7 +821,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "[class*='col-'] {\n  float: left;\n  padding-right: 20px;\n  padding-bottom: 20px;\n}\n[class*='col-']:last-of-type {\n  padding-right: 0;\n}\na {\n  text-decoration: none;\n}\n*, *:after, *:before {\n  box-sizing: border-box;\n}\nh3 {\n  text-align: center; margin-bottom: 0;\n}\nh4 {\n  position: relative;\n}\n.grid {\n  margin: 0;\n}\n.col-4-4 {\n  width: 100%;\n}\n.module {\n  padding: 20px;\n  text-align: center;\n  color: #eee;\n  min-width: 120px;\n  background-color: #607D8B;\n  border-radius: 2px;\n}\n.module:hover {\n  background-color: #EEE;\n  cursor: pointer;\n  color: #607d8b;\n}\n.grid-pad {\n  padding: 10px 0;\n}\n.grid-pad > [class*='col-']:last-of-type {\n  padding-right: 20px;\n}\n@media (max-width: 600px) {\n  .module {\n    font-size: 10px;\n    max-height: 75px; }\n}\n@media (max-width: 1024px) {\n  .grid {\n    margin: 0;\n  }\n  .module {\n    min-width: 60px;\n  }\n}\n", ""]);
+exports.push([module.i, "[class*='col-'] {\n  float: left;\n  padding-right: 20px;\n  padding-bottom: 20px;\n}\n[class*='col-']:last-of-type {\n  padding-right: 0;\n}\na {\n  text-decoration: none;\n}\n*, *:after, *:before {\n  box-sizing: border-box;\n}\nh3 {\n  text-align: center; margin-bottom: 0;\n}\nh4 {\n  position: relative;\n}\n.grid {\n  margin: 0;\n}\n.col-4-4 {\n  width: 100%;\n}\n.module {\n  padding: 20px;\n  text-align: center;\n  color: #eee;\n  min-width: 120px;\n  background-color: #607D8B;\n  border-radius: 2px;\n}\n.module:hover {\n  background-color: #EEE;\n  cursor: pointer;\n  color: #607d8b;\n}\n.grid-pad {\n  padding: 10px 0;\n}\n.grid-pad > [class*='col-']:last-of-type {\n  padding-right: 20px;\n}\n@media (max-width: 600px) {\n  .module {\n    font-size: 10px;}\n}\n@media (max-width: 1024px) {\n  .grid {\n    margin: 0;\n  }\n  .module {\n    min-width: 60px;\n  }\n}\n", ""]);
 
 // exports
 
@@ -732,7 +834,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/store/store-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<h3>Top Heroes</h3>\n<div class=\"grid grid-pad\">\n  <a *ngFor=\"let store of stores\"  [routerLink]=\"['/detail', store.objectId]\"  class=\"col-4-4\">\n    <div class=\"module store\">\n      <h4>{{store.storeName}}</h4>\n      <h4>{{store.address}}</h4>\n      <h4>{{store.desc}}</h4>\n      <h4>{{store.location}}</h4>\n      <h4>{{store.storeName}}</h4>\n    </div>\n  </a>\n</div>\n<hero-search></hero-search>\n"
+module.exports = "<div class=\"grid grid-pad\">\n  <a *ngFor=\"let store of stores\"  [routerLink]=\"['/store-detail', store.objectId]\"  class=\"col-4-4\">\n    <div class=\"module store\">\n      <h4>{{store.storeName}}</h4>\n      <h4>{{store.address}}</h4>\n      <h4>{{store.desc}}</h4>\n      <h4>{{store.location}}</h4>\n      <h4>{{store.storeName}}</h4>\n    </div>\n  </a>\n</div>\n"
 
 /***/ }),
 
@@ -742,30 +844,30 @@ module.exports = "<h3>Top Heroes</h3>\n<div class=\"grid grid-pad\">\n  <a *ngFo
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StoreListComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__store_service__ = __webpack_require__("../../../../../src/app/store/store.service.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
 
 var StoreListComponent = (function () {
-    function StoreListComponent() {
+    function StoreListComponent(storeService) {
+        this.storeService = storeService;
         this.stores = [];
     }
     StoreListComponent.prototype.ngOnInit = function () {
         this.getObject();
     };
     StoreListComponent.prototype.getObject = function () {
-        Baas.API_KEY = '6f25e0bc-f527-4bd0-824d-fcad7c4f2e91';
-        var table = Baas.Table.create('store');
-        table.fetch({
-            success: this.onSuccess.bind(this),
-            error: this.onError.bind(this)
-        });
+        this.storeService.getStores(this.onSuccess.bind(this), this.onError.bind(this));
     };
     StoreListComponent.prototype.onSuccess = function (model, response) {
-        console.log(response);
         this.stores = response.results;
     };
     StoreListComponent.prototype.onError = function (model, response) {
@@ -777,10 +879,99 @@ StoreListComponent = __decorate([
         selector: 'my-store-list',
         template: __webpack_require__("../../../../../src/app/store/store-list.component.html"),
         styles: [__webpack_require__("../../../../../src/app/store/store-list.component.css")]
-    })
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__store_service__["a" /* StoreService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__store_service__["a" /* StoreService */]) === "function" && _a || Object])
 ], StoreListComponent);
 
+var _a;
 //# sourceMappingURL=store-list.component.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/store/store.service.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StoreService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise__ = __webpack_require__("../../../../rxjs/add/operator/toPromise.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_toPromise__);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var StoreService = (function () {
+    function StoreService(http) {
+        this.http = http;
+        this.headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Headers */]({ 'Content-Type': 'application/json' });
+        this.StoresUrl = 'api/stores'; // URL to web api
+        Baas.API_KEY = '6f25e0bc-f527-4bd0-824d-fcad7c4f2e91';
+    }
+    StoreService.prototype.getStores = function (onSuccess, onError) {
+        var table = Baas.Table.create('store');
+        table.fetch({
+            success: onSuccess,
+            error: onError
+        });
+    };
+    StoreService.prototype.getStore = function (onSuccess, onError, objectId) {
+        var obj = Baas.Object.create('store', { objectId: objectId });
+        obj.fetch({
+            success: onSuccess,
+            error: onError
+        });
+    };
+    StoreService.prototype.getStore2 = function (objectId) {
+        var url = this.StoresUrl + "/" + objectId;
+        return this.http.get(url)
+            .toPromise()
+            .then(function (response) { return response.json().data; })
+            .catch(this.handleError);
+    };
+    StoreService.prototype.delete = function (objectId) {
+        var url = this.StoresUrl + "/" + objectId;
+        return this.http.delete(url, { headers: this.headers })
+            .toPromise()
+            .then(function () { return null; })
+            .catch(this.handleError);
+    };
+    StoreService.prototype.create = function (name) {
+        return this.http
+            .post(this.StoresUrl, JSON.stringify({ name: name }), { headers: this.headers })
+            .toPromise()
+            .then(function (res) { return res.json().data; })
+            .catch(this.handleError);
+    };
+    StoreService.prototype.update = function (store) {
+        var url = this.StoresUrl + "/" + store.objectId;
+        return this.http
+            .put(url, JSON.stringify(store), { headers: this.headers })
+            .toPromise()
+            .then(function () { return store; })
+            .catch(this.handleError);
+    };
+    StoreService.prototype.handleError = function (error) {
+        console.error('An error occurred', error); // for demo purposes only
+        return Promise.reject(error.message || error);
+    };
+    return StoreService;
+}());
+StoreService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Http */]) === "function" && _a || Object])
+], StoreService);
+
+var _a;
+//# sourceMappingURL=store.service.js.map
 
 /***/ }),
 
