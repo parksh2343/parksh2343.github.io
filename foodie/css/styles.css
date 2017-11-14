@@ -63,3 +63,14 @@ nav a.active {
 * {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* --- Links --- */
+a {padding:1px; border:1px solid #e0e0e0; color:#05b}
+a:hover, a:focus, a:active {border-color:#bcd; text-decoration:none; outline:0 none}
+/* --- Accordion --- */
+.js #main .accordion {visibility:hidden}
+* {list-style-type:none; margin:0; padding:0;}
+.accordion li {border:2px solid; background:#fff000;}
+
+
