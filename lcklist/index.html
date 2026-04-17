@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCK 경기 리스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .match-group { margin-bottom: 20px; }
+        .match-group h2 { color: #333; }
+        .match-list { list-style-type: none; padding: 0; }
+        .match-list li { margin-bottom: 10px; }
+        .match-list a { text-decoration: none; color: #007bff; }
+        .match-list a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>LCK 경기 비디오 리스트</h1>
+    <div id="content">데이터를 로딩 중...</div>
+
+    <script>
+        const url = 'https://game.naver.com/esports/League_of_Legends/videos/league/lck/lck_2026';
+
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // 비디오 링크를 찾기 위한 셀렉터 (가정: .video-item a 또는 적절한 셀렉터)
+                const links = doc.querySelectorAll('a[href*="/esports/League_of_Legends/videos/"]');
+                
+                const matches = [];
+                
+                links.forEach(link => {
+                    const title = link.textContent.trim();
+                    const href = link.href;
+                    
+                    // 정규식으로 제목 파싱
+                    const regex = /^(.+?) vs (.+?) 게임 (\d+) \| (\d{2}\.\d{2}) \| (\d{4}) (.+)$/;
+                    const match = title.match(regex);
+                    
+                    if (match) {
+                        const [, team1, team2, game, date, year, category] = match;
+                        matches.push({
+                            title: title,
+                            href: href,
+                            date: date,
+                            year: year,
+                            fullDate: new Date(`${year}-${date.replace('.', '-')}`),
+                            team1: team1,
+                            team2: team2,
+                            game: game,
+                            category: category
+                        });
+                    }
+                });
+                
+                // 경기일 별로 그룹화 및 정렬 (최근 경기 위로)
+                const grouped = matches.reduce((acc, match) => {
+                    const key = match.date;
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(match);
+                    return acc;
+                }, {});
+                
+                // 날짜 키를 정렬 (내림차순)
+                const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b.split('.').reverse().join('-')) - new Date(a.split('.').reverse().join('-')));
+                
+                // 화면에 표시
+                const content = document.getElementById('content');
+                content.innerHTML = '';
+                
+                sortedDates.forEach(date => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'match-group';
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = `${date} (${grouped[date][0].year})`;
+                    groupDiv.appendChild(h2);
+                    
+                    const ul = document.createElement('ul');
+                    ul.className = 'match-list';
+                    
+                    grouped[date].forEach(match => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = match.href;
+                        a.target = '_blank';
+                        a.textContent = match.title;
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+                    
+                    groupDiv.appendChild(ul);
+                    content.appendChild(groupDiv);
+                });
+            })
+            .catch(error => {
+console.log(error);
+                document.getElementById('content').innerHTML = '데이터를 불러오는 중 오류가 발생했습니다: ' + error.message;
+            });
+    </script>
+</body>
+</html>
