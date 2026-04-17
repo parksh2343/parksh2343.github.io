@@ -19,12 +19,14 @@
     <div id="content">데이터를 로딩 중...</div>
 
     <script>
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const proxyUrl = 'https://api.allorigins.win/get?url=';
         const targetUrl = 'https://game.naver.com/esports/League_of_Legends/videos/league/lck/lck_2026';
+        const encodedUrl = encodeURIComponent(targetUrl);
 
-        fetch(proxyUrl + targetUrl)
-            .then(response => response.text())
-            .then(html => {
+        fetch(proxyUrl + encodedUrl)
+            .then(response => response.json())
+            .then(data => {
+                const html = data.contents;
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 
