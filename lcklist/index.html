@@ -19,15 +19,16 @@
     <div id="content">데이터를 로딩 중...</div>
 
     <script>
-        const url = 'https://game.naver.com/esports/League_of_Legends/videos/league/lck/lck_2026';
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const targetUrl = 'https://game.naver.com/esports/League_of_Legends/videos/league/lck/lck_2026';
 
-        fetch(url)
+        fetch(proxyUrl + targetUrl)
             .then(response => response.text())
             .then(html => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 
-                // 비디오 링크를 찾기 위한 셀렉터 (가정: .video-item a 또는 적절한 셀렉터)
+                // 비디오 링크 찾기
                 const links = doc.querySelectorAll('a[href*="/esports/League_of_Legends/videos/"]');
                 
                 const matches = [];
@@ -47,7 +48,6 @@
                             href: href,
                             date: date,
                             year: year,
-                            fullDate: new Date(`${year}-${date.replace('.', '-')}`),
                             team1: team1,
                             team2: team2,
                             game: game,
@@ -97,8 +97,7 @@
                 });
             })
             .catch(error => {
-console.log(error);
-                document.getElementById('content').innerHTML = '데이터를 불러오는 중 오류가 발생했습니다: ' + error.message;
+                document.getElementById('content').innerHTML = '데이터를 불러오는 중 오류가 발생했습니다: ' + error.message + '<br>프록시가 차단되었을 수 있습니다. 로컬 서버를 사용하세요.';
             });
     </script>
 </body>
